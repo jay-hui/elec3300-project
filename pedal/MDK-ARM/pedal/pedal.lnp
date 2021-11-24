@@ -1,0 +1,23 @@
+--cpu Cortex-M3
+"pedal\startup_stm32f103xe.o"
+"pedal\main.o"
+"pedal\stm32f1xx_it.o"
+"pedal\stm32f1xx_hal_msp.o"
+"pedal\stm32f1xx_hal_gpio_ex.o"
+"pedal\stm32f1xx_hal_tim.o"
+"pedal\stm32f1xx_hal_tim_ex.o"
+"pedal\stm32f1xx_hal_uart.o"
+"pedal\stm32f1xx_hal.o"
+"pedal\stm32f1xx_hal_rcc.o"
+"pedal\stm32f1xx_hal_rcc_ex.o"
+"pedal\stm32f1xx_hal_gpio.o"
+"pedal\stm32f1xx_hal_dma.o"
+"pedal\stm32f1xx_hal_cortex.o"
+"pedal\stm32f1xx_hal_pwr.o"
+"pedal\stm32f1xx_hal_flash.o"
+"pedal\stm32f1xx_hal_flash_ex.o"
+"pedal\system_stm32f1xx.o"
+--library_type=microlib --strict --scatter "pedal\pedal.sct"
+--summary_stderr --info summarysizes --map --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "pedal.map" -o pedal\pedal.axf
