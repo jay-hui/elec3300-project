@@ -111,6 +111,15 @@ int main(void)
 			TX_BUFFER[0] = '0';
 			HAL_UART_Transmit(&huart2, TX_BUFFER, sizeof(TX_BUFFER), 100);
 		}
+
+    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET)
+		{
+			TX_BUFFER[0] = '2';
+			HAL_UART_Transmit(&huart2, TX_BUFFER, sizeof(TX_BUFFER), 100);
+			HAL_Delay(1000);
+			TX_BUFFER[0] = '0';
+			HAL_UART_Transmit(&huart2, TX_BUFFER, sizeof(TX_BUFFER), 100);
+		}
     
   }
   /* USER CODE END 3 */
