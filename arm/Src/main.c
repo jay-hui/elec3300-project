@@ -35,6 +35,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define BUFFER_LEN 1
+#define RIGHT_PULSE 35
+#define LEFT_PULSE 240
+#define LINE_SPACING 20
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -70,12 +73,12 @@ static void MX_TIM4_Init(void);
 void turn_page(int next)
 {
   LCD_Clear(0, 0, 240, 320, 0xFFFF);
-  LCD_DrawString(70, 160, "Turning");
+  LCD_DrawString(70, LINE_SPACING * 7, "Turning");
 
   // start moving down
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
 
-  page = page + next;
+  page = page + (next ? 1 : -1);
   for (int i = 0; i < 5; i++)
   {
     if (i == 1)
@@ -84,7 +87,7 @@ void turn_page(int next)
       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
       // start flipping next page
       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
-      __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 240);
+      __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, (next ? LEFT_PULSE : RIGHT_PULSE));
     }
     else if (i == 4)
     {
@@ -94,14 +97,14 @@ void turn_page(int next)
       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
     }
 
-    LCD_DrawString(130 + i * 5, 160, ".");
+    LCD_DrawString(130 + i * 5, LINE_SPACING * 7, ".");
     HAL_Delay(500);
   }
   LCD_Clear(0, 0, 240, 320, 0xFFFF);
 
   // stop moving up
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
-  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 35);
+  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, (next ? RIGHT_PULSE : LEFT_PULSE));
   HAL_Delay(500);
 }
 /* USER CODE END 0 */
@@ -170,59 +173,14 @@ int main(void)
 			turn_page(1);
 		}
     else if ((RX_BUFFER[0] == '2' || HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) && page > 1) {
-      turn_page(-1);
+      turn_page(0);
     }
 		else {
 			sprintf(pageStr, "%d", page);
-			LCD_DrawString(60, 100, "STM32 is ready!");
-			LCD_DrawString(90, 180, "Page");
-			LCD_DrawString(125, 180, pageStr);
+			LCD_DrawString(100, LINE_SPACING * 5, "Ready");
+			LCD_DrawString(95, LINE_SPACING * 7, "Page");
+			LCD_DrawString(130, LINE_SPACING * 7, pageStr);
 		}
-		/*
-		
-		// K1 pressed
-		else if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET && page > 1)
-		{
-			LCD_Clear(0, 0, 240, 320, 0xFFFF);
-			LCD_DrawString(70, 160, "Turning");
-			
-			// start moving down
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
-			
-			page = page - 1;
-			for (int i = 0; i < 5; i++)
-			{
-				
-				if (i == 1)
-				{
-					// stop moving down
-					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
-					// start flipping previous page
-					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET);
-				}
-				else if (i == 4)
-				{
-					// stop flipping
-					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
-					// start moving up
-					HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
-				}
-				
-				LCD_DrawString(130 + i * 5, 160, ".");
-				HAL_Delay(1000);
-			}
-			LCD_Clear(0, 0, 240, 320, 0xFFFF);
-			
-			// stop moving up
-			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
-		}
-		else {
-			sprintf(pageStr, "%d", page);
-			LCD_DrawString(60, 100, "STM32 is ready!");
-			LCD_DrawString(90, 180, "Page");
-			LCD_DrawString(125, 180, pageStr);
-		}
-		*/
   }
   /* USER CODE END 3 */
 }
