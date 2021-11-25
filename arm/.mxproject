@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=C:/elec3300/project/arm/Inc
+HeaderPath=C:/elec3300/elec3300-project/arm/Inc
 HeaderFiles=stm32f1xx_it.h;stm32f1xx_hal_conf.h;main.h;
-SourcePath=C:/elec3300/project/arm/Src
+SourcePath=C:/elec3300/elec3300-project/arm/Src
 SourceFiles=stm32f1xx_it.c;stm32f1xx_hal_msp.c;main.c;
 
 [PreviousLibFiles]

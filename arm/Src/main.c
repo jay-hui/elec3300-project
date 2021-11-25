@@ -35,9 +35,14 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define BUFFER_LEN 1
+#define LINE_SPACING 20
+
+
 #define RIGHT_PULSE 35
 #define LEFT_PULSE 240
-#define LINE_SPACING 20
+#define MAGNET_PIN GPIO_PIN_12
+#define MOTOR_PIN_1 GPIO_PIN_13
+#define MOTOR_PIN_2 GPIO_PIN_15
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -76,7 +81,7 @@ void turn_page(int next)
   LCD_DrawString(70, LINE_SPACING * 7, "Turning");
 
   // start moving down
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_1, GPIO_PIN_SET);
 
   page = page + (next ? 1 : -1);
   for (int i = 0; i < 5; i++)
@@ -84,17 +89,18 @@ void turn_page(int next)
     if (i == 1)
     {
       // stop moving down
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET);
+      HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_2, GPIO_PIN_SET);
+      // magnet on
+      HAL_GPIO_WritePin(GPIOB, MAGNET_PIN, GPIO_PIN_SET);
       // start flipping next page
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET);
       __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, (next ? LEFT_PULSE : RIGHT_PULSE));
     }
     else if (i == 4)
     {
-      // stop flipping
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
+      // magnet off
+      HAL_GPIO_WritePin(GPIOB, MAGNET_PIN, GPIO_PIN_RESET);
       // start moving up
-      HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+      HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_1, GPIO_PIN_RESET);
     }
 
     LCD_DrawString(130 + i * 5, LINE_SPACING * 7, ".");
@@ -103,7 +109,7 @@ void turn_page(int next)
   LCD_Clear(0, 0, 240, 320, 0xFFFF);
 
   // stop moving up
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_2, GPIO_PIN_RESET);
   __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, (next ? RIGHT_PULSE : LEFT_PULSE));
   HAL_Delay(500);
 }
@@ -144,14 +150,15 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	LCD_INIT();
 	
-	// for flipping motor
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET);
+	// for magnet
+	HAL_GPIO_WritePin(GPIOB, MAGNET_PIN, GPIO_PIN_RESET);
+
+  // for flipping motor
 	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 35);
 	
 	// for vertical motor
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
-	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_1, GPIO_PIN_RESET);
+	HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_2, GPIO_PIN_RESET);
 	
 	// variables
 	char pageStr[2];
@@ -332,19 +339,16 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, L293D_flipping_motor_Pin|L293D_vertical_motor_Pin|L293D_flipping_motorB14_Pin|L293D_vertical_motorB15_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, electromagnet_Pin|L293D_vertical_motor_Pin|nothing_Pin|L293D_vertical_motorB15_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LCD_BL_GPIO_Port, LCD_BL_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(Bluetooth_Receive_GPIO_Port, Bluetooth_Receive_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LCD_BLE1_GPIO_Port, LCD_BLE1_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : L293D_flipping_motor_Pin L293D_vertical_motor_Pin L293D_flipping_motorB14_Pin L293D_vertical_motorB15_Pin */
-  GPIO_InitStruct.Pin = L293D_flipping_motor_Pin|L293D_vertical_motor_Pin|L293D_flipping_motorB14_Pin|L293D_vertical_motorB15_Pin;
+  /*Configure GPIO pins : electromagnet_Pin L293D_vertical_motor_Pin nothing_Pin L293D_vertical_motorB15_Pin */
+  GPIO_InitStruct.Pin = electromagnet_Pin|L293D_vertical_motor_Pin|nothing_Pin|L293D_vertical_motorB15_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -356,13 +360,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(LCD_BL_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : Bluetooth_Receive_Pin */
-  GPIO_InitStruct.Pin = Bluetooth_Receive_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(Bluetooth_Receive_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PA8 */
   GPIO_InitStruct.Pin = GPIO_PIN_8;

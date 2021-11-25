@@ -60,18 +60,16 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define L293D_flipping_motor_Pin GPIO_PIN_12
-#define L293D_flipping_motor_GPIO_Port GPIOB
+#define electromagnet_Pin GPIO_PIN_12
+#define electromagnet_GPIO_Port GPIOB
 #define L293D_vertical_motor_Pin GPIO_PIN_13
 #define L293D_vertical_motor_GPIO_Port GPIOB
-#define L293D_flipping_motorB14_Pin GPIO_PIN_14
-#define L293D_flipping_motorB14_GPIO_Port GPIOB
+#define nothing_Pin GPIO_PIN_14
+#define nothing_GPIO_Port GPIOB
 #define L293D_vertical_motorB15_Pin GPIO_PIN_15
 #define L293D_vertical_motorB15_GPIO_Port GPIOB
 #define LCD_BL_Pin GPIO_PIN_12
 #define LCD_BL_GPIO_Port GPIOD
-#define Bluetooth_Receive_Pin GPIO_PIN_7
-#define Bluetooth_Receive_GPIO_Port GPIOC
 #define LCD_BLE1_Pin GPIO_PIN_1
 #define LCD_BLE1_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
