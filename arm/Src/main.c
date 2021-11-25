@@ -39,7 +39,7 @@
 
 
 #define RIGHT_PULSE 35
-#define LEFT_PULSE 240
+#define LEFT_PULSE 215
 #define MAGNET_PIN GPIO_PIN_12
 #define MOTOR_PIN_1 GPIO_PIN_13
 #define MOTOR_PIN_2 GPIO_PIN_15
@@ -77,6 +77,7 @@ static void MX_TIM4_Init(void);
 /* USER CODE BEGIN 0 */
 void turn_page(int next)
 {
+  next = 1;
   LCD_Clear(0, 0, 240, 320, 0xFFFF);
   LCD_DrawString(70, LINE_SPACING * 7, "Turning");
 
@@ -154,7 +155,7 @@ int main(void)
 	HAL_GPIO_WritePin(GPIOB, MAGNET_PIN, GPIO_PIN_RESET);
 
   // for flipping motor
-	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, 35);
+	__HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, RIGHT_PULSE);
 	
 	// for vertical motor
 	HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_1, GPIO_PIN_RESET);
