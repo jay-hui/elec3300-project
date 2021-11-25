@@ -34,6 +34,9 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 #define BUFFER_LEN 1
+
+#define NEXTPAGE_PIN GPIO_PIN_10
+#define PREVPAGE_PIN GPIO_PIN_11
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -103,7 +106,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_SET)
+		if (HAL_GPIO_ReadPin(GPIOB, NEXTPAGE_PIN) == GPIO_PIN_SET)
 		{
 			TX_BUFFER[0] = '1';
 			HAL_UART_Transmit(&huart2, TX_BUFFER, sizeof(TX_BUFFER), 100);
@@ -112,7 +115,7 @@ int main(void)
 			HAL_UART_Transmit(&huart2, TX_BUFFER, sizeof(TX_BUFFER), 100);
 		}
 
-    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_SET)
+    if (HAL_GPIO_ReadPin(GPIOB, PREVPAGE_PIN) == GPIO_PIN_SET)
 		{
 			TX_BUFFER[0] = '2';
 			HAL_UART_Transmit(&huart2, TX_BUFFER, sizeof(TX_BUFFER), 100);
