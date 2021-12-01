@@ -41,8 +41,8 @@
 #define RIGHT_PULSE 35
 #define LEFT_PULSE 215
 #define MAGNET_PIN GPIO_PIN_12
-#define MOTOR_PIN_1 GPIO_PIN_13
-#define MOTOR_PIN_2 GPIO_PIN_15
+#define MOTOR_PIN_1 GPIO_PIN_15
+#define MOTOR_PIN_2 GPIO_PIN_13
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -77,10 +77,14 @@ static void MX_TIM4_Init(void);
 /* USER CODE BEGIN 0 */
 void turn_page(int next)
 {
-  next = 1;
   LCD_Clear(0, 0, 240, 320, 0xFFFF);
   LCD_DrawString(70, LINE_SPACING * 7, "Turning");
 
+
+  if (!next) {
+    __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, LEFT_PULSE);
+    HAL_Delay(1000);
+  }
   // start moving down
   HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_1, GPIO_PIN_SET);
 
@@ -111,7 +115,7 @@ void turn_page(int next)
 
   // stop moving up
   HAL_GPIO_WritePin(GPIOB, MOTOR_PIN_2, GPIO_PIN_RESET);
-  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, (next ? RIGHT_PULSE : LEFT_PULSE));
+  __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_1, RIGHT_PULSE);
   HAL_Delay(500);
 }
 /* USER CODE END 0 */
