@@ -1,4 +1,9 @@
-# ELEC3300 - Introduction to Embedded Systems
+# ELEC 3300 - Introduction to Embedded Systems
+
+## Website link to our product and report
+https://jay-hui.github.io/elec3300-project-report/
+
+
 
 ## Course Description
 
